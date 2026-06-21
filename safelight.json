@@ -8,6 +8,6 @@
   "categories": ["Panels"],
   "keywords": ["sort", "search", "filter", "library", "exif", "camera", "lens", "smart album"],
   "license": "MIT",
-  "minAppVersion": "2.0.0"
+  "minAppVersion": "2.0.0",
   "icon": "https://repository-images.githubusercontent.com/1275061919/d1013887-2cdc-4b08-b578-ba29b4e5cfbd"
 }
