@@ -1,13 +1,13 @@
 {
   "id": "com.safelight.advanced-library-sort",
   "name": "Advanced Library Sort",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Find any shot in seconds. Sort your Library by camera, lens, focal length, or ISO — just like Lightroom — and filter as you type by filename, keyword, or camera settings. Save the searches you use most as one-click Smart Searches.",
   "author": "Anthony Reimche",
   "main": "dist/index.js",
   "categories": ["Panels"],
   "keywords": ["sort", "search", "filter", "library", "exif", "camera", "lens", "smart album"],
   "license": "MIT",
-  "minAppVersion": "2.0.0",
+  "minAppVersion": "2.4.3",
   "icon": "https://repository-images.githubusercontent.com/1275061919/d1013887-2cdc-4b08-b578-ba29b4e5cfbd"
 }

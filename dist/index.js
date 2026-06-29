@@ -1,4 +1,4 @@
-//#region extensions/Advanced Library Sort/src/runtime.ts
+//#region src/runtime.ts
 let _react = null;
 let _api = null;
 function initRuntime(api) {
@@ -20,7 +20,7 @@ function h(type, props, ...children) {
 	return R().createElement(type, props, ...children);
 }
 //#endregion
-//#region extensions/Advanced Library Sort/src/search-store.ts
+//#region src/search-store.ts
 let store = null;
 function initSearchStore(api) {
 	store = api.stores.create((set) => ({
@@ -36,7 +36,7 @@ function searchStore() {
 	return store;
 }
 //#endregion
-//#region extensions/Advanced Library Sort/src/query.ts
+//#region src/query.ts
 /** Build a matcher from a raw query. Empty/whitespace matches everything. */
 function buildMatcher(raw) {
 	const tokens = tokenize(raw);
@@ -152,7 +152,7 @@ function dateStr(p) {
 	return `${d.getFullYear()}-${mm}-${dd}`;
 }
 //#endregion
-//#region extensions/Advanced Library Sort/src/sort.ts
+//#region src/sort.ts
 const PREFIX = "com.safelight.advanced-library-sort";
 function text(get) {
 	return (a, b) => {
@@ -202,7 +202,7 @@ const SORTS = [
 	}
 ];
 //#endregion
-//#region extensions/Advanced Library Sort/src/icons.ts
+//#region src/icons.ts
 /** Magnifier sized to `size` px. Colour is inherited (currentColor). */
 function searchIcon(size = 14) {
 	return h("svg", {
@@ -231,8 +231,15 @@ function searchIcon(size = 14) {
 	}));
 }
 //#endregion
-//#region extensions/Advanced Library Sort/src/SearchBar.ts
+//#region src/SearchBar.ts
 function SearchBar() {
+	const ui = api().ui;
+	if (!ui) return h("div", { style: {
+		padding: "10px",
+		fontSize: "11px",
+		color: "var(--color-text-muted)"
+	} }, "Update Safelight to use this panel.");
+	const t = ui.tokens;
 	const react = R();
 	const store = searchStore();
 	const query = store((s) => s.query);
@@ -254,15 +261,7 @@ function SearchBar() {
 		setVisible(false);
 	};
 	const active = isQueryActive(query);
-	return h("div", { style: {
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "space-between",
-		gap: "8px",
-		padding: "6px 12px",
-		borderBottom: "1px solid var(--color-border-subtle)",
-		background: "var(--color-surface-1)"
-	} }, h("div", { style: {
+	const field = h("div", { style: {
 		position: "relative",
 		display: "flex",
 		alignItems: "center",
@@ -274,7 +273,7 @@ function SearchBar() {
 		top: "50%",
 		transform: "translateY(-50%)",
 		display: "flex",
-		color: "var(--color-text-muted)",
+		color: t.textMuted,
 		pointerEvents: "none"
 	} }, searchIcon(14)), h("input", {
 		ref: inputRef,
@@ -288,18 +287,18 @@ function SearchBar() {
 			else close();
 		},
 		onFocus: (e) => {
-			e.currentTarget.style.borderColor = "var(--color-accent)";
+			e.currentTarget.style.borderColor = t.accent;
 		},
 		onBlur: (e) => {
-			e.currentTarget.style.borderColor = "var(--color-border-subtle)";
+			e.currentTarget.style.borderColor = t.borderSubtle;
 		},
 		style: {
 			width: "100%",
 			boxSizing: "border-box",
 			borderRadius: "4px",
-			border: "1px solid var(--color-border-subtle)",
-			background: "var(--color-surface-2)",
-			color: "var(--color-text-primary)",
+			border: `1px solid ${t.borderSubtle}`,
+			background: t.surface2,
+			color: t.textPrimary,
 			fontSize: "11px",
 			padding: "5px 26px 5px 28px",
 			outline: "none"
@@ -319,40 +318,30 @@ function SearchBar() {
 			border: "none",
 			padding: 0,
 			cursor: "pointer",
-			color: "var(--color-text-muted)",
+			color: t.textMuted,
 			fontSize: "15px",
 			lineHeight: 1
 		}
-	}, "×") : null), h("button", {
+	}, "×") : null);
+	const closeButton = h(ui.Button, {
+		variant: "ghost",
+		size: "sm",
 		onClick: close,
 		title: "Close search (Ctrl+F)",
-		"aria-label": "Close search",
-		style: {
-			display: "flex",
-			alignItems: "center",
-			justifyContent: "center",
-			width: "20px",
-			height: "20px",
-			borderRadius: "4px",
-			background: "transparent",
-			border: "none",
-			cursor: "pointer",
-			color: "var(--color-text-muted)",
-			fontSize: "16px",
-			lineHeight: 1
-		},
-		onMouseEnter: (e) => {
-			e.currentTarget.style.background = "var(--color-surface-3)";
-			e.currentTarget.style.color = "var(--color-text-primary)";
-		},
-		onMouseLeave: (e) => {
-			e.currentTarget.style.background = "transparent";
-			e.currentTarget.style.color = "var(--color-text-muted)";
-		}
-	}, "×"));
+		"aria-label": "Close search"
+	}, "×");
+	return h("div", { style: {
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "space-between",
+		gap: "8px",
+		padding: "6px 12px",
+		borderBottom: `1px solid ${t.borderSubtle}`,
+		background: t.surface1
+	} }, field, closeButton);
 }
 //#endregion
-//#region extensions/Advanced Library Sort/src/SmartSearches.ts
+//#region src/SmartSearches.ts
 const KEY = "savedSearches";
 function load() {
 	const raw = api().settings.get(KEY, []);
@@ -378,6 +367,13 @@ function filterSummary(f) {
 	return parts.join(" · ");
 }
 function SmartSearchesPanel() {
+	const ui = api().ui;
+	if (!ui) return h("div", { style: {
+		padding: "10px",
+		fontSize: "11px",
+		color: "var(--color-text-muted)"
+	} }, "Update Safelight to use this panel.");
+	const t = ui.tokens;
 	const react = R();
 	const [list, setList] = react.useState(load);
 	const [name, setName] = react.useState("");
@@ -416,9 +412,9 @@ function SmartSearchesPanel() {
 		flex: 1,
 		boxSizing: "border-box",
 		borderRadius: "4px",
-		border: "1px solid var(--color-border-subtle)",
-		background: "var(--color-surface-2)",
-		color: "var(--color-text-primary)",
+		border: `1px solid ${t.borderSubtle}`,
+		background: t.surface2,
+		color: t.textPrimary,
 		fontSize: "11px",
 		padding: "4px 8px",
 		outline: "none"
@@ -446,24 +442,16 @@ function SmartSearchesPanel() {
 			if (e.key === "Enter" && canSave) onSave();
 		},
 		style: textInput
-	}), h("button", {
+	}), h(ui.Button, {
+		variant: "secondary",
+		size: "sm",
 		onClick: onSave,
 		disabled: !canSave,
-		title: canSave ? "Save the current search + filters" : "Type a search or set a filter first",
-		style: {
-			borderRadius: "4px",
-			border: "none",
-			background: "var(--color-surface-3)",
-			color: "var(--color-text-secondary)",
-			fontSize: "11px",
-			padding: "4px 8px",
-			cursor: canSave ? "pointer" : "default",
-			opacity: canSave ? 1 : .4
-		}
+		title: canSave ? "Save the current search + filters" : "Type a search or set a filter first"
 	}, "Save")), list.length === 0 ? h("p", { style: {
 		padding: "8px 4px",
 		fontSize: "10px",
-		color: "var(--color-text-muted)"
+		color: t.textMuted
 	} }, "No saved searches yet. Search or filter the Library, then Save.") : h("ul", { style: {
 		display: "flex",
 		flexDirection: "column",
@@ -481,7 +469,7 @@ function SmartSearchesPanel() {
 			padding: "4px"
 		},
 		onMouseEnter: (e) => {
-			e.currentTarget.style.background = "var(--color-surface-2)";
+			e.currentTarget.style.background = t.surface2;
 		},
 		onMouseLeave: (e) => {
 			e.currentTarget.style.background = "transparent";
@@ -506,15 +494,15 @@ function SmartSearchesPanel() {
 		alignItems: "center",
 		gap: "6px",
 		maxWidth: "100%",
-		color: "var(--color-text-primary)",
+		color: t.textPrimary,
 		fontSize: "11px"
 	} }, h("span", { style: {
 		display: "flex",
-		color: "var(--color-text-muted)"
+		color: t.textMuted
 	} }, searchIcon(12)), h("span", { style: ellipsis }, s.name)), h("span", { style: {
 		maxWidth: "100%",
 		fontSize: "9px",
-		color: "var(--color-text-muted)",
+		color: t.textMuted,
 		...ellipsis
 	} }, [s.query, filterSummary(s.filter)].filter(Boolean).join("  ·  ") || "all photos")), h("button", {
 		onClick: () => onDelete(s.id),
@@ -525,7 +513,7 @@ function SmartSearchesPanel() {
 			border: "none",
 			padding: "0 4px",
 			cursor: "pointer",
-			color: "var(--color-text-muted)",
+			color: t.textMuted,
 			fontSize: "13px",
 			lineHeight: 1
 		},
@@ -533,12 +521,12 @@ function SmartSearchesPanel() {
 			e.currentTarget.style.color = "#e06666";
 		},
 		onMouseLeave: (e) => {
-			e.currentTarget.style.color = "var(--color-text-muted)";
+			e.currentTarget.style.color = t.textMuted;
 		}
 	}, "×")))));
 }
 //#endregion
-//#region extensions/Advanced Library Sort/src/index.ts
+//#region src/index.ts
 const ID = "com.safelight.advanced-library-sort";
 const GRID_FILTER_ID = `${ID}.filter`;
 const DEBOUNCE_MS = 150;

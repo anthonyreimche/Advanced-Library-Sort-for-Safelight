@@ -47,6 +47,14 @@ function filterSummary(f: LibraryFilter): string {
 }
 
 export function SmartSearchesPanel() {
+  const ui = api().ui;
+  if (!ui)
+    return h(
+      "div",
+      { style: { padding: "10px", fontSize: "11px", color: "var(--color-text-muted)" } },
+      "Update Safelight to use this panel.",
+    );
+  const t = ui.tokens;
   const react = R();
   const [list, setList] = react.useState(load);
   const [name, setName] = react.useState("");
@@ -94,15 +102,17 @@ export function SmartSearchesPanel() {
     commit(list.filter((s: SavedSearch) => s.id !== id));
   };
 
-  // Inline styles — see icons.ts for why the extension can't rely on Tailwind.
+  // Name field stays a bare <input> (not api.ui TextInput) so it keeps
+  // Enter-to-save; the kit's TextInput contract has no onKeyDown. Colours come
+  // from api.ui.tokens so it still matches the app.
   const textInput = {
     minWidth: 0,
     flex: 1,
     boxSizing: "border-box" as const,
     borderRadius: "4px",
-    border: "1px solid var(--color-border-subtle)",
-    background: "var(--color-surface-2)",
-    color: "var(--color-text-primary)",
+    border: `1px solid ${t.borderSubtle}`,
+    background: t.surface2,
+    color: t.textPrimary,
     fontSize: "11px",
     padding: "4px 8px",
     outline: "none",
@@ -133,23 +143,15 @@ export function SmartSearchesPanel() {
         style: textInput,
       }),
       h(
-        "button",
+        ui.Button,
         {
+          variant: "secondary",
+          size: "sm",
           onClick: onSave,
           disabled: !canSave,
           title: canSave
             ? "Save the current search + filters"
             : "Type a search or set a filter first",
-          style: {
-            borderRadius: "4px",
-            border: "none",
-            background: "var(--color-surface-3)",
-            color: "var(--color-text-secondary)",
-            fontSize: "11px",
-            padding: "4px 8px",
-            cursor: canSave ? "pointer" : "default",
-            opacity: canSave ? 1 : 0.4,
-          },
         },
         "Save",
       ),
@@ -161,7 +163,7 @@ export function SmartSearchesPanel() {
             style: {
               padding: "8px 4px",
               fontSize: "10px",
-              color: "var(--color-text-muted)",
+              color: t.textMuted,
             },
           },
           "No saved searches yet. Search or filter the Library, then Save.",
@@ -192,7 +194,7 @@ export function SmartSearchesPanel() {
                 },
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onMouseEnter: (e: any) => {
-                  e.currentTarget.style.background = "var(--color-surface-2)";
+                  e.currentTarget.style.background = t.surface2;
                 },
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onMouseLeave: (e: any) => {
@@ -225,13 +227,13 @@ export function SmartSearchesPanel() {
                       alignItems: "center",
                       gap: "6px",
                       maxWidth: "100%",
-                      color: "var(--color-text-primary)",
+                      color: t.textPrimary,
                       fontSize: "11px",
                     },
                   },
                   h(
                     "span",
-                    { style: { display: "flex", color: "var(--color-text-muted)" } },
+                    { style: { display: "flex", color: t.textMuted } },
                     searchIcon(12),
                   ),
                   h("span", { style: ellipsis }, s.name),
@@ -242,7 +244,7 @@ export function SmartSearchesPanel() {
                     style: {
                       maxWidth: "100%",
                       fontSize: "9px",
-                      color: "var(--color-text-muted)",
+                      color: t.textMuted,
                       ...ellipsis,
                     },
                   },
@@ -261,7 +263,7 @@ export function SmartSearchesPanel() {
                     border: "none",
                     padding: "0 4px",
                     cursor: "pointer",
-                    color: "var(--color-text-muted)",
+                    color: t.textMuted,
                     fontSize: "13px",
                     lineHeight: 1,
                   },
@@ -271,7 +273,7 @@ export function SmartSearchesPanel() {
                   },
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   onMouseLeave: (e: any) => {
-                    e.currentTarget.style.color = "var(--color-text-muted)";
+                    e.currentTarget.style.color = t.textMuted;
                   },
                 },
                 "×",

@@ -127,6 +127,11 @@ export interface SettingsContribution {
   order?: number;
 }
 
+// ── Shared core UI kit (api.ui) ──────────────────────────────────────────────
+// Generic React component handles; props are validated at the call site.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ComponentType = (...args: any[]) => any;
+
 // ── The API handed to activate() ─────────────────────────────────────────────
 
 export interface SafelightAPI {
@@ -152,6 +157,24 @@ export interface SafelightAPI {
     [key: string]: unknown;
   };
   keybindings: { getBinding(actionId: string): string };
+  /** Shared core UI kit. Absent on older app builds — guard before use. */
+  ui?: {
+    Button: ComponentType;
+    Select: ComponentType;
+    TextInput: ComponentType;
+    NumberInput: ComponentType;
+    TextArea: ComponentType;
+    Toggle: ComponentType;
+    SegmentedControl: ComponentType;
+    Field: ComponentType;
+    Section: ComponentType;
+    Card: ComponentType;
+    Badge: ComponentType;
+    ProgressBar: ComponentType;
+    Row: ComponentType;
+    Stack: ComponentType;
+    tokens: Record<string, string>;
+  };
 }
 
 export interface ExtensionModule {

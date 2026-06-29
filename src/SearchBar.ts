@@ -7,12 +7,20 @@
 // so the app's Tailwind build never scans this file — only classes the core app
 // already uses would resolve. Inline styles + CSS variables always apply.
 
-import { h, R } from "./runtime";
+import { h, R, api } from "./runtime";
 import { searchStore } from "./search-store";
 import { isQueryActive } from "./query";
 import { searchIcon } from "./icons";
 
 export function SearchBar() {
+  const ui = api().ui;
+  if (!ui)
+    return h(
+      "div",
+      { style: { padding: "10px", fontSize: "11px", color: "var(--color-text-muted)" } },
+      "Update Safelight to use this panel.",
+    );
+  const t = ui.tokens;
   const react = R();
   const store = searchStore();
   const query: string = store((s) => s.query);
@@ -61,7 +69,7 @@ export function SearchBar() {
           top: "50%",
           transform: "translateY(-50%)",
           display: "flex",
-          color: "var(--color-text-muted)",
+          color: t.textMuted,
           pointerEvents: "none",
         },
       },
@@ -86,19 +94,19 @@ export function SearchBar() {
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onFocus: (e: any) => {
-        e.currentTarget.style.borderColor = "var(--color-accent)";
+        e.currentTarget.style.borderColor = t.accent;
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onBlur: (e: any) => {
-        e.currentTarget.style.borderColor = "var(--color-border-subtle)";
+        e.currentTarget.style.borderColor = t.borderSubtle;
       },
       style: {
         width: "100%",
         boxSizing: "border-box",
         borderRadius: "4px",
-        border: "1px solid var(--color-border-subtle)",
-        background: "var(--color-surface-2)",
-        color: "var(--color-text-primary)",
+        border: `1px solid ${t.borderSubtle}`,
+        background: t.surface2,
+        color: t.textPrimary,
         fontSize: "11px",
         padding: "5px 26px 5px 28px", // top right(clear) bottom left(icon)
         outline: "none",
@@ -122,7 +130,7 @@ export function SearchBar() {
               border: "none",
               padding: 0,
               cursor: "pointer",
-              color: "var(--color-text-muted)",
+              color: t.textMuted,
               fontSize: "15px",
               lineHeight: 1,
             },
@@ -134,35 +142,13 @@ export function SearchBar() {
 
   // The close button at the far right of the bar.
   const closeButton = h(
-    "button",
+    ui.Button,
     {
+      variant: "ghost",
+      size: "sm",
       onClick: close,
       title: "Close search (Ctrl+F)",
       "aria-label": "Close search",
-      style: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "20px",
-        height: "20px",
-        borderRadius: "4px",
-        background: "transparent",
-        border: "none",
-        cursor: "pointer",
-        color: "var(--color-text-muted)",
-        fontSize: "16px",
-        lineHeight: 1,
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onMouseEnter: (e: any) => {
-        e.currentTarget.style.background = "var(--color-surface-3)";
-        e.currentTarget.style.color = "var(--color-text-primary)";
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onMouseLeave: (e: any) => {
-        e.currentTarget.style.background = "transparent";
-        e.currentTarget.style.color = "var(--color-text-muted)";
-      },
     },
     "×",
   );
@@ -177,8 +163,8 @@ export function SearchBar() {
         justifyContent: "space-between",
         gap: "8px",
         padding: "6px 12px",
-        borderBottom: "1px solid var(--color-border-subtle)",
-        background: "var(--color-surface-1)",
+        borderBottom: `1px solid ${t.borderSubtle}`,
+        background: t.surface1,
       },
     },
     field,
